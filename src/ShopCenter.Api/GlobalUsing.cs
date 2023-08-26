@@ -1,0 +1,11 @@
+﻿global using ShopCenter.Infrastructure;
+global using Microsoft.EntityFrameworkCore;
+global using ApiHelper;
+global using System.Reflection;
+global using ShopCenter.Api.Infrastructure;
+//global using ShopCenter.Application.Queries;
+global using MediatR;
+global using Microsoft.AspNetCore.Mvc;
+global using ApiHelper.Enums;
+global using ShopCenter.Api.Middlewares;
+global using ShopCenter.Application.Commands; 
