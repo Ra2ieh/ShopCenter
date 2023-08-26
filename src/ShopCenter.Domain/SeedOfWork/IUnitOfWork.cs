@@ -5,4 +5,5 @@ public interface IUnitOfWork
     ITripRepository TripRepository { get; }
     IDelayReportRepository DelayReportRepository { get; }
     IDelayQueueRepository DelayQueueRepository { get; }
+    IOrderRepository OrderRepository { get; }
 }

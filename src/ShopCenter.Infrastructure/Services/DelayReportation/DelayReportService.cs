@@ -15,8 +15,39 @@ public class DelayReportService: IDelayReportService
     public async Task<Result<DelayReportResponse>> DelayReportRegistration(int orderId)
     {
         var response = new Result<DelayReportResponse>();
+        //todo eager loading
+        var orderInfo=await _unitOfWork.OrderRepository.GetById(orderId);
+        if (orderInfo == null)
+        {
+            response.SetError(new CustomError
+            {
+                Code = "404",
+                Message = "Not found"
+            });
+            return response;
+        }
+        if (orderInfo.OrderTime.AddMinutes(orderInfo.DeliveryTime) > DateTime.Now)
+        {
+            response.SetError(new CustomError
+            {
+                Code = "412",
+                Message = "کاربر گرامی همچنان از زمان انتظار شما باقی مانده است. امکان ثبت تاخیر برای شما فراهم نمی باشد"
+            });
+            return response;
+        }  
+        if (orderInfo.DelayQueues?.Any(e=>!e.IsProgressed) ?? false)
+        {
+            response.SetError(new CustomError
+            {
+                Code = "413",
+                Message = "کاربر گرامی درخواست پیگیری شما قبلا ثبت شده و توسط همکاران ما در حال بررسی می باشد."
+            });
+            return response;
+        }
+        int newDeliveryTime = 0;
         var requiredNewOrderTimeStatus = new List<TripStatusEnum> { TripStatusEnum.ASSIGNED, TripStatusEnum.AT_VENDOR, TripStatusEnum.PICKED };
         var tripStatus = await _unitOfWork.TripRepository.GetTripStatus(orderId);
+       
         if (tripStatus == null || !requiredNewOrderTimeStatus.Contains((TripStatusEnum)tripStatus.TripStatusId))
         {
             //add to queue
@@ -34,7 +65,7 @@ public class DelayReportService: IDelayReportService
 
             response.Data = deliveryReportResponse;
         }
-
+ 
         else
         {
             //get new time 
@@ -49,7 +80,7 @@ public class DelayReportService: IDelayReportService
             {
                 NewDeliveryTime = String.Format("زمان تحویل جدید تا {0} دقیقه دیگر", deliveryTimeData.Data.Data.Eta)
             };
-
+            newDeliveryTime = deliveryTimeData.Data.Data.Eta;
             response.Data = deliveryReportResponse;
            
         }
@@ -58,6 +89,7 @@ public class DelayReportService: IDelayReportService
         {
             OrderId = orderId,
             ReportedTime = DateTime.Now,
+            NewDeliveryTime= newDeliveryTime
         };
         await _unitOfWork.DelayReportRepository.Add(delayReport);
         return response;

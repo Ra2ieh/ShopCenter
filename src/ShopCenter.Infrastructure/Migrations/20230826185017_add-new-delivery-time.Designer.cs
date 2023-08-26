@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopCenter.Infrastructure;
 
@@ -11,9 +12,11 @@ using ShopCenter.Infrastructure;
 namespace ShopCenter.Infrastructure.Migrations
 {
     [DbContext(typeof(ShopCenterDbContext))]
-    partial class ShopCenterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230826185017_add-new-delivery-time")]
+    partial class addnewdeliverytime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace ShopCenter.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DelayQueueId"));
 
-                    b.Property<int?>("AgentId")
+                    b.Property<int>("AgentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("InsertTime")
@@ -226,7 +229,9 @@ namespace ShopCenter.Infrastructure.Migrations
                 {
                     b.HasOne("ShopCenter.Domain.Models.Agent", "Agent")
                         .WithMany()
-                        .HasForeignKey("AgentId");
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ShopCenter.Domain.Models.Order", "Order")
                         .WithMany("DelayQueues")

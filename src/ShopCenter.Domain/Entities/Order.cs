@@ -9,4 +9,5 @@ public class Order
     public Consumer Consumer { get; set; }
     public Vendor Vendor { get; set; }
     public ICollection<DelayReport> DelayReports { get; set; }
+    public ICollection<DelayQueue> DelayQueues { get; set; }
 }
