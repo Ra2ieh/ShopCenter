@@ -15,8 +15,13 @@ public class DelayQueueRepository : IDelayQueueRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public Task GetAsync(DelayQueue delayQueue)
+    public async Task<List<DelayQueue>> GetListAsync()
     {
-        throw new NotImplementedException();
+       return await _dbContext.DelayQueue.Where(e=>!e.IsProgressed).ToListAsync();
+    }
+    public async Task Update(DelayQueue delayQueue)
+    {
+         _dbContext.DelayQueue.Update(delayQueue);
+        await _dbContext.SaveChangesAsync();
     }
 }

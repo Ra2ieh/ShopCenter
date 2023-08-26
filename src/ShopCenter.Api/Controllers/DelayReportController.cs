@@ -24,4 +24,18 @@ public class DelayReportController : Controller
 
         return Ok(serviceResult.Data);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetRequest([FromQuery] int agentId)
+    {
+        var getDelayReportCommand = new GetDelayReportCommand
+        {
+            AgentId = agentId,
+        };
+        var serviceResult = await _mediator.Send(getDelayReportCommand);
+        if (serviceResult.HasError)
+            return BadRequest(serviceResult.Error);
+
+        return Ok(serviceResult.Data);
+    }
 }

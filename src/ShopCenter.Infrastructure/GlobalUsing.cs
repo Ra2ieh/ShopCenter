@@ -17,3 +17,4 @@ global using ShopCenter.Infrastructure.Configs;
 global using ShopCenter.Infrastructure.Services.DelayReportation;
 global using ShopCenter.Domain.Entities;
 global using ShopCenter.Domain.Repositories.Models;
+global using ShopCenter.Infrastructure.Services.GetDelayQueue; 

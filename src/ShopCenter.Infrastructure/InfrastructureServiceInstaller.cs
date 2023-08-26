@@ -1,5 +1,7 @@
 ﻿
 
+
+
 namespace ShopCenter.Infrastructure;
 
 public class InfrastructureServiceInstaller:IServiceInstaller
@@ -18,6 +20,7 @@ public class InfrastructureServiceInstaller:IServiceInstaller
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IDelayReportService, DelayReportService>();
         services.AddScoped<IGetDeliveryTimeService, GetDeliveryTimeService>();
+        services.AddScoped<IDelayQueueService, DelayQueueService>();
         services.AddDbContext<ShopCenterDbContext>(options =>
         options.UseSqlServer(appSettings.GetConnectionString("ShopCenterDbConectionString"))
         );

@@ -8,7 +8,7 @@
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(DelayReportRegistrationCommandHandler).Assembly));
-            //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CourseWithTeachersAndTagsDetailQueryHandler).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(GetDelayReportCommandHandler).Assembly));
 
             builder.Services.InstallServicesInAssemblies(builder.Configuration);
             return builder.Build();
