@@ -60,7 +60,7 @@ public class DelayReportService: IDelayReportService
             await _unitOfWork.DelayQueueRepository.AddAsync(delayQueueItem);
             DelayReportResponse deliveryReportResponse = new DelayReportResponse
             {
-                NewDeliveryTime = String.Format("کاربر گرامی درخواست شما ثبت شد و توسط همکاران ما بررسی شده و در اسرع وقت با شما تماس خواهند گرفت")
+                Message = String.Format("کاربر گرامی درخواست شما ثبت شد و توسط همکاران ما بررسی شده و در اسرع وقت با شما تماس خواهند گرفت")
             };
 
             response.Data = deliveryReportResponse;
@@ -78,7 +78,7 @@ public class DelayReportService: IDelayReportService
             //update table and time 
             DelayReportResponse deliveryReportResponse = new DelayReportResponse
             {
-                NewDeliveryTime = String.Format("زمان تحویل جدید تا {0} دقیقه دیگر", deliveryTimeData.Data.Data.Eta)
+                Message = String.Format("زمان تحویل جدید تا {0} دقیقه دیگر", deliveryTimeData.Data.Data.Eta)
             };
             newDeliveryTime = deliveryTimeData.Data.Data.Eta;
             response.Data = deliveryReportResponse;
