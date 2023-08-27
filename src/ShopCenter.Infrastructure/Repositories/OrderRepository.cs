@@ -9,7 +9,7 @@ public class OrderRepository:IOrderRepository
     }
     public async Task<Order> GetById(int orderId)
     {
-     return await _dbContext.Order.Where(e=>e.OrderId==orderId).Include(e=>e.DelayQueues).FirstOrDefaultAsync();
+     return await _dbContext.Order.Where(e=>e.OrderId==orderId).Include(e=>e.DelayQueues).Include(e=>e.DelayReports).FirstOrDefaultAsync();
          
     }
 }

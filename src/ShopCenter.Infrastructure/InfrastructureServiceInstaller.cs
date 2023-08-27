@@ -25,5 +25,7 @@ public class InfrastructureServiceInstaller:IServiceInstaller
         services.AddDbContext<ShopCenterDbContext>(options =>
         options.UseSqlServer(appSettings.GetConnectionString("ShopCenterDbConectionString"))
         );
+        
+        //appSettings.GetSection("AppConfig").Get<AppConfig>();
     }
 }

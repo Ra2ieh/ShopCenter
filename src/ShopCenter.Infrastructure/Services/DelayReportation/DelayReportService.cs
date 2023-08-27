@@ -26,7 +26,7 @@ public class DelayReportService: IDelayReportService
             });
             return response;
         }
-        if (orderInfo.OrderTime.AddMinutes(orderInfo.DeliveryTime) > DateTime.Now)
+        if (orderInfo.OrderTime.AddMinutes(orderInfo.DeliveryTime) > DateTime.Now )
         {
             response.SetError(new CustomError
             {
@@ -34,7 +34,17 @@ public class DelayReportService: IDelayReportService
                 Message = "کاربر گرامی همچنان از زمان انتظار شما باقی مانده است. امکان ثبت تاخیر برای شما فراهم نمی باشد"
             });
             return response;
-        }  
+        }
+        var lastReport = orderInfo.DelayReports?.LastOrDefault();
+        if (lastReport!=null && lastReport.ReportedTime.AddMinutes(lastReport.NewDeliveryTime) > DateTime.Now)
+        {
+            response.SetError(new CustomError
+            {
+                Code = "412",
+                Message = "کاربر گرامی همچنان از زمان انتظار شما باقی مانده است. امکان ثبت تاخیر برای شما فراهم نمی باشد"
+            });
+            return response;
+        }
         if (orderInfo.DelayQueues?.Any(e=>!e.IsProgressed) ?? false)
         {
             response.SetError(new CustomError

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.21" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.21" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -25,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiHelper\ApiHelper.csproj" />
+    <ProjectReference Include="..\ShopCenter.Api\ShopCenter.Api.csproj" />
     <ProjectReference Include="..\ShopCenter.Infrastructure\ShopCenter.Infrastructure.csproj" />
   </ItemGroup>
 
