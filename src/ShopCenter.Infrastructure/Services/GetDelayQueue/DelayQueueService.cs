@@ -20,7 +20,7 @@ public class DelayQueueService: IDelayQueueService
             response.SetError(new CustomError
             {
                 Code = "415",
-                Message = "شما دارای درخواست در حال بررسی می باشید.امکان دریافت درخواست دیگر مجاز نیست"
+                Message = "شما دارای درخواست باز می باشید.امکان دریافت درخواست دیگر مجاز نیست"
             });
             return response;
         }

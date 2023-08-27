@@ -1,6 +1,4 @@
-﻿
-
-namespace ShopCenter.Api.Controllers;
+﻿namespace ShopCenter.Api.Controllers;
 [ApiController]
 [Route("api/v1/DelayReport/[action]")]
 public class DelayReportController : Controller
@@ -33,6 +31,17 @@ public class DelayReportController : Controller
             AgentId = agentId,
         };
         var serviceResult = await _mediator.Send(getDelayReportCommand);
+        if (serviceResult.HasError)
+            return BadRequest(serviceResult.Error);
+
+        return Ok(serviceResult.Data);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllDelayReport()
+    {
+        var getAllDelaysQuery = new GetAllDelaysQuery();
+        var serviceResult = await _mediator.Send(getAllDelaysQuery);
         if (serviceResult.HasError)
             return BadRequest(serviceResult.Error);
 

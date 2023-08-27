@@ -21,6 +21,7 @@ public class InfrastructureServiceInstaller:IServiceInstaller
         services.AddScoped<IDelayReportService, DelayReportService>();
         services.AddScoped<IGetDeliveryTimeService, GetDeliveryTimeService>();
         services.AddScoped<IDelayQueueService, DelayQueueService>();
+        services.AddScoped<IGetAllDelaysService, GetAllDelaysService>();
         services.AddDbContext<ShopCenterDbContext>(options =>
         options.UseSqlServer(appSettings.GetConnectionString("ShopCenterDbConectionString"))
         );

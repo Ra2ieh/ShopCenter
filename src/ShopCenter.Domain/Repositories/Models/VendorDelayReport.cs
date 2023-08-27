@@ -1,9 +1,12 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ShopCenter.Domain.Models
+namespace ShopCenter.Domain.Repositories.Models
 {
-
-    public class DelayReport
+    internal class VendorDelayReport
     {
         public int DelayReportId { get; set; }
         public int NewDeliveryTime { get; set; }
