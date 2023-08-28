@@ -16,7 +16,7 @@ Xunit for test<br />
 
 1. Open a package manager console and execute the following commands:<br />
 
- Note: Be careful about the  server and user pass in the  connection string that is located in the Appsetting.json file:<br />
+   Note: Be careful about the  server and user pass in the  connection string that is located in the Appsetting.json file:<br />
  
     ```
     update-database
