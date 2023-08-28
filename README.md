@@ -19,9 +19,9 @@ Xunit for test<br />
     ```
     update-database
     ```
-     ```
+     
     These commands will create a database.<br />
-      ```
+     
 
 2. Run the application.<br />
 
