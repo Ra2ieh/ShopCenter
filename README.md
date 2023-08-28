@@ -7,11 +7,11 @@ Agents can check a delay report and probe the matter.
 A report of vendors' delayed times in the current week. 
 # Technologies
 ShopCenter has been developed by these nuggets and technologies:
-.Net 6 \n
-EF Core 6
-MediatR
-Repository pattern
-Xunit for test
+.Net 6__ 
+EF Core 6__
+MediatR__
+Repository pattern__
+Xunit for test__
 
 
 
