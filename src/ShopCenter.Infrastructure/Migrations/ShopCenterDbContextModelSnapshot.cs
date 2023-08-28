@@ -60,14 +60,36 @@ namespace ShopCenter.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AgentId"));
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("AgentId");
 
                     b.ToTable("Agent");
+
+                    b.HasData(
+                        new
+                        {
+                            AgentId = 10,
+                            FirstName = " نام 1",
+                            LastName = "نام 2"
+                        },
+                        new
+                        {
+                            AgentId = 11,
+                            FirstName = " نام 2",
+                            LastName = "نام 2"
+                        },
+                        new
+                        {
+                            AgentId = 12,
+                            FirstName = " نام 3",
+                            LastName = "نام 3"
+                        });
                 });
 
             modelBuilder.Entity("ShopCenter.Domain.Models.Consumer", b =>
@@ -79,14 +101,30 @@ namespace ShopCenter.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConsumerId"));
 
                     b.Property<string>("ConsumerName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.HasKey("ConsumerId");
 
                     b.ToTable("Consumer");
+
+                    b.HasData(
+                        new
+                        {
+                            ConsumerId = 10,
+                            ConsumerName = " نام 1",
+                            PhoneNumber = "09222772017"
+                        },
+                        new
+                        {
+                            ConsumerId = 11,
+                            ConsumerName = " نام 2",
+                            PhoneNumber = "09222772018"
+                        });
                 });
 
             modelBuilder.Entity("ShopCenter.Domain.Models.DelayReport", b =>
@@ -174,7 +212,8 @@ namespace ShopCenter.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TripStatusId"));
 
                     b.Property<string>("TripStatusTitle")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("TripStatusId");
 
@@ -215,11 +254,26 @@ namespace ShopCenter.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("VendorName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("VendorId");
 
                     b.ToTable("Vendor");
+
+                    b.HasData(
+                        new
+                        {
+                            VendorId = 10,
+                            ContractDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VendorName = "فروشگاه 1"
+                        },
+                        new
+                        {
+                            VendorId = 11,
+                            ContractDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VendorName = "فروشگاه 2"
+                        });
                 });
 
             modelBuilder.Entity("ShopCenter.Domain.Entities.DelayQueue", b =>

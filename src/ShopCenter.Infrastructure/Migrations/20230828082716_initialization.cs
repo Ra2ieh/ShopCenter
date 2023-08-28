@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ShopCenter.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class createtable1 : Migration
+    public partial class initialization : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +19,8 @@ namespace ShopCenter.Infrastructure.Migrations
                 {
                     AgentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    FirstName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -33,8 +33,8 @@ namespace ShopCenter.Infrastructure.Migrations
                 {
                     ConsumerId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ConsumerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ConsumerName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,7 +47,7 @@ namespace ShopCenter.Infrastructure.Migrations
                 {
                     TripStatusId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TripStatusTitle = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TripStatusTitle = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,7 +60,7 @@ namespace ShopCenter.Infrastructure.Migrations
                 {
                     VendorId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    VendorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VendorName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     ContractDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -77,7 +77,7 @@ namespace ShopCenter.Infrastructure.Migrations
                     DeliveryTime = table.Column<int>(type: "int", nullable: false),
                     VendorId = table.Column<int>(type: "int", nullable: false),
                     ConsumerId = table.Column<int>(type: "int", nullable: false),
-                    RegisterTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -102,6 +102,7 @@ namespace ShopCenter.Infrastructure.Migrations
                 {
                     DelayReportId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    NewDeliveryTime = table.Column<int>(type: "int", nullable: false),
                     ReportedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -110,6 +111,33 @@ namespace ShopCenter.Infrastructure.Migrations
                     table.PrimaryKey("PK_Delay_Reports", x => x.DelayReportId);
                     table.ForeignKey(
                         name: "FK_Delay_Reports_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DelayQueue",
+                columns: table => new
+                {
+                    DelayQueueId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    AgentId = table.Column<int>(type: "int", nullable: true),
+                    IsProgressed = table.Column<bool>(type: "bit", nullable: false),
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DelayQueue", x => x.DelayQueueId);
+                    table.ForeignKey(
+                        name: "FK_DelayQueue_Agent_AgentId",
+                        column: x => x.AgentId,
+                        principalTable: "Agent",
+                        principalColumn: "AgentId");
+                    table.ForeignKey(
+                        name: "FK_DelayQueue_Order_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Order",
                         principalColumn: "OrderId",
@@ -143,6 +171,25 @@ namespace ShopCenter.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Agent",
+                columns: new[] { "AgentId", "FirstName", "LastName" },
+                values: new object[,]
+                {
+                    { 10, " نام 1", "نام 2" },
+                    { 11, " نام 2", "نام 2" },
+                    { 12, " نام 3", "نام 3" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Consumer",
+                columns: new[] { "ConsumerId", "ConsumerName", "PhoneNumber" },
+                values: new object[,]
+                {
+                    { 10, " نام 1", "09222772017" },
+                    { 11, " نام 2", "09222772018" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "TripStatus",
                 columns: new[] { "TripStatusId", "TripStatusTitle" },
                 values: new object[,]
@@ -153,9 +200,28 @@ namespace ShopCenter.Infrastructure.Migrations
                     { 4, "DELIVERED" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Vendor",
+                columns: new[] { "VendorId", "ContractDate", "VendorName" },
+                values: new object[,]
+                {
+                    { 10, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "فروشگاه 1" },
+                    { 11, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "فروشگاه 2" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Delay_Reports_OrderId",
                 table: "Delay_Reports",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DelayQueue_AgentId",
+                table: "DelayQueue",
+                column: "AgentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DelayQueue_OrderId",
+                table: "DelayQueue",
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
@@ -183,13 +249,16 @@ namespace ShopCenter.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Agent");
-
-            migrationBuilder.DropTable(
                 name: "Delay_Reports");
 
             migrationBuilder.DropTable(
+                name: "DelayQueue");
+
+            migrationBuilder.DropTable(
                 name: "Trip");
+
+            migrationBuilder.DropTable(
+                name: "Agent");
 
             migrationBuilder.DropTable(
                 name: "Order");

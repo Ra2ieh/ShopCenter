@@ -12,4 +12,10 @@ public class OrderRepository:IOrderRepository
      return await _dbContext.Order.Where(e=>e.OrderId==orderId).Include(e=>e.DelayQueues).Include(e=>e.DelayReports).FirstOrDefaultAsync();
          
     }
+
+    public async Task AddOrder(Order order)
+    {
+        await _dbContext.Order.AddAsync(order);
+        await _dbContext.SaveChangesAsync();
+    }
 }

@@ -7,5 +7,6 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using ShopCenter.Domain.Repositories;
 global using ShopCenter.Domain.Entities; 
 global using ShopCenter.Domain.Repositories.Models; 
+global using System.ComponentModel.DataAnnotations;
 //global using ShopCenter.Domain.Repositories.Models;
 

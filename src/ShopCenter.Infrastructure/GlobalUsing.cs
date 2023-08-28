@@ -21,3 +21,4 @@ global using ShopCenter.Infrastructure.Services.GetDelayQueue;
 global using ShopCenter.Infrastructure.Services.DelayReportation.Models; 
 global using System.ComponentModel.DataAnnotations;
 global using ShopCenter.Infrastructure.Extensions; 
+global using ShopCenter.Infrastructure.Services.OrderScope;

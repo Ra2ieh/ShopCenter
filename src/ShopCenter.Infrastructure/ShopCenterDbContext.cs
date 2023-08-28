@@ -1,6 +1,4 @@
-﻿using ShopCenter.Domain.Entities;
-
-namespace ShopCenter.Infrastructure;
+﻿namespace ShopCenter.Infrastructure;
 
 public class ShopCenterDbContext : DbContext
 {
@@ -23,6 +21,9 @@ public class ShopCenterDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new TripStatusEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new VendorEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new AgentEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ConsumerEntityConfiguration());
 
     }
 }
