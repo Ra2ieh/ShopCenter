@@ -1,8 +1,10 @@
 ﻿
 
+using ShopCenter.Infrastructure.Enums;
+
 namespace ShopCenter.Infrastructure.Services.DelayReportation;
 
-public class DelayReportService: IDelayReportService
+public class DelayReportService : IDelayReportService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IGetDeliveryTimeService _getDeliveryTimeService;
@@ -15,49 +17,50 @@ public class DelayReportService: IDelayReportService
     public async Task<Result<DelayReportResponse>> DelayReportRegistration(int orderId)
     {
         var response = new Result<DelayReportResponse>();
-        //todo eager loading
-        var orderInfo=await _unitOfWork.OrderRepository.GetById(orderId);
-        if (orderInfo == null)
+        try
+        {
+            var orderInfo = await _unitOfWork.OrderRepository.GetById(orderId);
+            CheckOrderId(orderInfo);
+            CheckDeliveryTime(orderInfo);
+            CheckDuplicateRequest(orderInfo);
+            await CheckTrip(orderId, response);
+        }
+        catch (CustomException ex)
         {
             response.SetError(new CustomError
             {
-                Code = "404",
-                Message = "Not found"
+                Message = ex.Message,
+                Code = ex.Data["code"].ToString(),
             });
-            return response;
         }
-        if (orderInfo.OrderTime.AddMinutes(orderInfo.DeliveryTime) > DateTime.Now )
+        catch (Exception)
         {
+
             response.SetError(new CustomError
             {
-                Code = "412",
-                Message = "کاربر گرامی همچنان از زمان انتظار شما باقی مانده است. امکان ثبت تاخیر برای شما فراهم نمی باشد"
+                Message = Exceptions.ServereError.ToDisplay()
             });
-            return response;
         }
-        var lastReport = orderInfo.DelayReports?.LastOrDefault();
-        if (lastReport!=null && lastReport.ReportedTime.AddMinutes(lastReport.NewDeliveryTime) > DateTime.Now)
+
+        return response;
+    }
+
+    private async Task AddDepayReportToDb(int orderId, int newDeliveryTime)
+    {
+        var delayReport = new DelayReport
         {
-            response.SetError(new CustomError
-            {
-                Code = "412",
-                Message = "کاربر گرامی همچنان از زمان انتظار شما باقی مانده است. امکان ثبت تاخیر برای شما فراهم نمی باشد"
-            });
-            return response;
-        }
-        if (orderInfo.DelayQueues?.Any(e=>!e.IsProgressed) ?? false)
-        {
-            response.SetError(new CustomError
-            {
-                Code = "413",
-                Message = "کاربر گرامی درخواست پیگیری شما قبلا ثبت شده و توسط همکاران ما در حال بررسی می باشد."
-            });
-            return response;
-        }
+            OrderId = orderId,
+            ReportedTime = DateTime.Now,
+            NewDeliveryTime = newDeliveryTime
+        };
+        await _unitOfWork.DelayReportRepository.Add(delayReport);
+    }
+
+    private async Task CheckTrip(int orderId, Result<DelayReportResponse> response)
+    {
         int newDeliveryTime = 0;
         var requiredNewOrderTimeStatus = new List<TripStatusEnum> { TripStatusEnum.ASSIGNED, TripStatusEnum.AT_VENDOR, TripStatusEnum.PICKED };
         var tripStatus = await _unitOfWork.TripRepository.GetTripStatus(orderId);
-       
         if (tripStatus == null || !requiredNewOrderTimeStatus.Contains((TripStatusEnum)tripStatus.TripStatusId))
         {
             //add to queue
@@ -70,38 +73,51 @@ public class DelayReportService: IDelayReportService
             await _unitOfWork.DelayQueueRepository.AddAsync(delayQueueItem);
             DelayReportResponse deliveryReportResponse = new DelayReportResponse
             {
-                Message = String.Format("کاربر گرامی درخواست شما ثبت شد و توسط همکاران ما بررسی شده و در اسرع وقت با شما تماس خواهند گرفت")
+                Message = BusinessLogicMessages.ReportWillBeInProgressed.ToString(),
             };
 
             response.Data = deliveryReportResponse;
         }
- 
+
         else
         {
-            //get new time 
+            //get new delivery time 
             var deliveryTimeData = await _getDeliveryTimeService.GetNewDeliveryTime();
             if (deliveryTimeData.HasError)
-            {
-                response.Error = deliveryTimeData.Error;
-                return response;
-            }
-            //update table and time 
+
+                throw new CustomException(deliveryTimeData.Error.Message, deliveryTimeData.Error.Code);
+
             DelayReportResponse deliveryReportResponse = new DelayReportResponse
             {
-                Message = String.Format("زمان تحویل جدید تا {0} دقیقه دیگر", deliveryTimeData.Data.Data.Eta)
+                Message = String.Format(BusinessLogicMessages.NewDeliveryTime.ToDisplay(), deliveryTimeData.Data?.Data?.Eta)
             };
             newDeliveryTime = deliveryTimeData.Data.Data.Eta;
             response.Data = deliveryReportResponse;
-           
-        }
 
-        var delayReport = new DelayReport
-        {
-            OrderId = orderId,
-            ReportedTime = DateTime.Now,
-            NewDeliveryTime= newDeliveryTime
-        };
-        await _unitOfWork.DelayReportRepository.Add(delayReport);
-        return response;
+        }
+        await AddDepayReportToDb(orderId, newDeliveryTime);
+  
+    }
+
+    private void CheckDuplicateRequest(Order orderInfo)
+    {
+        if (orderInfo.DelayQueues?.Any(e => !e.IsProgressed) ?? false)
+            throw new CustomException(Exceptions.DuplicateReport.ToDisplay(), Exceptions.DuplicateReport.ToString());
+    }
+
+    private void CheckDeliveryTime(Order orderInfo)
+    {
+        if (orderInfo.OrderTime.AddMinutes(orderInfo.DeliveryTime) > DateTime.Now)
+            throw new CustomException(Exceptions.CanNotReportDelay.ToDisplay(), Exceptions.CanNotReportDelay.ToString());
+        var lastReport = orderInfo.DelayReports?.LastOrDefault();
+        if (lastReport != null && lastReport.ReportedTime.AddMinutes(lastReport.NewDeliveryTime) > DateTime.Now)
+            throw new CustomException(Exceptions.CanNotReportDelay.ToDisplay(), Exceptions.CanNotReportDelay.ToString());
+    }
+
+    private void CheckOrderId(Order orderInfo)
+    {
+        if (orderInfo == null)
+            throw new CustomException(Exceptions.OrderNotFound.ToDisplay(), Exceptions.OrderNotFound.ToString());
+
     }
 }

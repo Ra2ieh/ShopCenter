@@ -1,8 +1,4 @@
-﻿
-
-
-
-namespace ShopCenter.Infrastructure;
+﻿namespace ShopCenter.Infrastructure;
 
 public class InfrastructureServiceInstaller:IServiceInstaller
 {
@@ -12,7 +8,7 @@ public class InfrastructureServiceInstaller:IServiceInstaller
         optionBuilder.LogTo(Console.WriteLine);
         services.AddHttpClient("deliveryTimeService", client =>
         {
-            var baseUrl = "https://run.mocky.io";
+            var baseUrl = appSettings.GetSection("AppConfig:GetDeliveryTimeConfig:BaseUrl").Value;
             client.BaseAddress = new Uri(baseUrl);
             client.Timeout = TimeSpan.FromSeconds(30);
         }
@@ -26,6 +22,6 @@ public class InfrastructureServiceInstaller:IServiceInstaller
         options.UseSqlServer(appSettings.GetConnectionString("ShopCenterDbConectionString"))
         );
         
-        //appSettings.GetSection("AppConfig").Get<AppConfig>();
+        appSettings.GetSection("AppConfig").Get<AppConfig>();
     }
 }

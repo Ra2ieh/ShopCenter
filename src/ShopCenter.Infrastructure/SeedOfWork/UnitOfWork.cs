@@ -10,6 +10,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly Lazy<IDelayReportRepository> _delayReportRepository;
     private readonly Lazy<IDelayQueueRepository> _delayQueueRepository;
     private readonly Lazy<IOrderRepository> _orderRepository;
+    private readonly Lazy<IAgentRepository> _agentRepository;
     public UnitOfWork(ShopCenterDbContext context)
     {
         _context = context;
@@ -17,6 +18,7 @@ public class UnitOfWork : IUnitOfWork
         _delayReportRepository = new Lazy<IDelayReportRepository>(() => new DelayReportRepository(_context));
         _delayQueueRepository = new Lazy<IDelayQueueRepository>(() => new DelayQueueRepository(_context));
         _orderRepository=new Lazy<IOrderRepository>(() => new OrderRepository(_context));
+        _agentRepository=new Lazy<IAgentRepository>(() => new AgentRepository(_context));
     }
 
     public ITripRepository TripRepository => _tripRepository.Value;
@@ -26,4 +28,5 @@ public class UnitOfWork : IUnitOfWork
     public IDelayQueueRepository DelayQueueRepository => _delayQueueRepository.Value;
 
     public IOrderRepository OrderRepository => _orderRepository.Value;
+    public IAgentRepository AgentRepository => _agentRepository.Value;
 }

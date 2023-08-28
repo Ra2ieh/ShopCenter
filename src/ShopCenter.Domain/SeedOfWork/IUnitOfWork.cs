@@ -6,4 +6,5 @@ public interface IUnitOfWork
     IDelayReportRepository DelayReportRepository { get; }
     IDelayQueueRepository DelayQueueRepository { get; }
     IOrderRepository OrderRepository { get; }
+    IAgentRepository AgentRepository { get; }
 }

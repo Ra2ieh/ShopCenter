@@ -19,3 +19,5 @@ global using ShopCenter.Domain.Entities;
 global using ShopCenter.Domain.Repositories.Models;
 global using ShopCenter.Infrastructure.Services.GetDelayQueue; 
 global using ShopCenter.Infrastructure.Services.DelayReportation.Models; 
+global using System.ComponentModel.DataAnnotations;
+global using ShopCenter.Infrastructure.Extensions; 
