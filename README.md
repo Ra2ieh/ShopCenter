@@ -17,10 +17,11 @@ Xunit for test<br />
 1. Open a package manager console and execute the following commands:<br />
 
     ```
-update-database
+    update-database
     ```
-
+     ```
     These commands will create a database.<br />
+      ```
 
 2. Run the application.<br />
 
@@ -29,7 +30,7 @@ update-database
     Note: If you need to create migrations, you can use these commands:<br />
 
     ```
-add-migration initialization
+    add-migration initialization
     ```
 
 
